@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoChat.Presentation", "EchoChat.Presentation\EchoChat.Presentation.csproj", "{BFCDDEAA-FD80-40A9-B359-EFD7C2BF577B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7837B03F-0EB5-4BCC-9998-41E214A7ED12}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EchoChat.Domain", "EchoChat.Domain\EchoChat.Domain.csproj", "{B4B26680-1AC8-479D-A205-ECCD2FA48D8F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EchoChat.Application", "EchoChat.Application\EchoChat.Application.csproj", "{CA92CD44-8143-4191-BB2C-009644DEF629}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EchoChat.Infrastructure", "EchoChat.Infrastructure\EchoChat.Infrastructure.csproj", "{0119894D-1AA2-43AA-8B76-E8419684F4A0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EchoChat.Presentation", "EchoChat.Presentation\EchoChat.Presentation.csproj", "{CAC1EAA1-B8F3-4A80-AC49-581B488B0ABE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,13 +19,31 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{BFCDDEAA-FD80-40A9-B359-EFD7C2BF577B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BFCDDEAA-FD80-40A9-B359-EFD7C2BF577B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BFCDDEAA-FD80-40A9-B359-EFD7C2BF577B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BFCDDEAA-FD80-40A9-B359-EFD7C2BF577B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4B26680-1AC8-479D-A205-ECCD2FA48D8F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4B26680-1AC8-479D-A205-ECCD2FA48D8F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4B26680-1AC8-479D-A205-ECCD2FA48D8F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4B26680-1AC8-479D-A205-ECCD2FA48D8F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA92CD44-8143-4191-BB2C-009644DEF629}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA92CD44-8143-4191-BB2C-009644DEF629}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA92CD44-8143-4191-BB2C-009644DEF629}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA92CD44-8143-4191-BB2C-009644DEF629}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0119894D-1AA2-43AA-8B76-E8419684F4A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0119894D-1AA2-43AA-8B76-E8419684F4A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0119894D-1AA2-43AA-8B76-E8419684F4A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0119894D-1AA2-43AA-8B76-E8419684F4A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CAC1EAA1-B8F3-4A80-AC49-581B488B0ABE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAC1EAA1-B8F3-4A80-AC49-581B488B0ABE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAC1EAA1-B8F3-4A80-AC49-581B488B0ABE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAC1EAA1-B8F3-4A80-AC49-581B488B0ABE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B4B26680-1AC8-479D-A205-ECCD2FA48D8F} = {7837B03F-0EB5-4BCC-9998-41E214A7ED12}
+		{CA92CD44-8143-4191-BB2C-009644DEF629} = {7837B03F-0EB5-4BCC-9998-41E214A7ED12}
+		{0119894D-1AA2-43AA-8B76-E8419684F4A0} = {7837B03F-0EB5-4BCC-9998-41E214A7ED12}
+		{CAC1EAA1-B8F3-4A80-AC49-581B488B0ABE} = {7837B03F-0EB5-4BCC-9998-41E214A7ED12}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D4E3EB5D-0773-441D-84F1-F174C4A8137F}
