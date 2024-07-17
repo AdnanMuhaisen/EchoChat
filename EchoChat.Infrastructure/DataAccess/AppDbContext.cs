@@ -1,5 +1,4 @@
-﻿using EchoChat.Domain.ChatAggregates;
-using EchoChat.Domain.UserAggregates;
+﻿using EchoChat.Domain.UserAggregates;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +7,7 @@ namespace EchoChat.Infrastructure.DataAccess;
 
 public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>, int>
 {
-    public DbSet<Chat> Chats => Set<Chat>();
-
     public AppDbContext(DbContextOptions dbContextOptions) : base(dbContextOptions) { }
-
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -23,6 +19,6 @@ public class AppDbContext : IdentityDbContext<ApplicationUser, IdentityRole<int>
         builder.Entity<IdentityUserLogin<int>>(entity => entity.ToTable("UserLogins"));
         builder.Entity<IdentityRoleClaim<int>>(entity => entity.ToTable("RoleClaims"));
         builder.Entity<IdentityUserToken<int>>(entity => entity.ToTable("UserTokens"));
-        builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
+        //builder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
     }
 }

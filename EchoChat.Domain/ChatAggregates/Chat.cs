@@ -1,14 +1,26 @@
 ﻿using EchoChat.Domain.Abstractions;
+using Google.Cloud.Firestore;
 
 namespace EchoChat.Domain.ChatAggregates;
 
-public class Chat : IEntity
+[FirestoreData]
+public class Chat : IFirestoreEntity, IDeletableEntity
 {
-    public int Id { get; set; }
+    [FirestoreDocumentId]
+    public string? Id { get; set; }
 
-    public int SenderId { get; set; }
+    [FirestoreProperty]
+    public string? UserId { get; set; }
 
-    public int ReceiverId { get; set; }
+    [FirestoreProperty]
+    public string? ReceiverId { get; set; }
 
-    // collection of messages
+    [FirestoreProperty]
+    public List<Message> Messages { get; set; } = [];
+
+    [FirestoreProperty]
+    public bool IsDeleted { get; set; }
+
+    [FirestoreProperty]
+    public DateTime? DeletedAt { get; set; }
 }
