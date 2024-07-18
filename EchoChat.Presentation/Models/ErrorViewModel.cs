@@ -1,4 +1,4 @@
-namespace EchoChat.Presentation.Models;
+namespace EchoChat.Models;
 
 public class ErrorViewModel
 {
