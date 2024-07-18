@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace EchoChat.Presentation.Controllers;
+namespace EchoChat.Controllers;
+
 public class HomeController : Controller
 {
     public IActionResult Index()

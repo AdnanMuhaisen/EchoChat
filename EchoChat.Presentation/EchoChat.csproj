@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<UserSecretsId>aspnet-EchoChat.Presentation-8887babb-83de-44a4-965f-693f62befda1</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Remove="Infrastructure\DataAccess\Firebase\chatapp-6632a-firebase-adminsdk-d5f7w-c0b5c344ec.json" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Google.Cloud.Firestore" Version="3.8.0" />
+		<PackageReference Include="Mapster" Version="7.4.0" />
+		<PackageReference Include="MediatR" Version="12.3.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.7" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.7" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.7">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="Infrastructure\DataAccess\Firebase\chatapp-6632a-firebase-adminsdk-d5f7w-c0b5c344ec.json" />
+	</ItemGroup>
+
+</Project>

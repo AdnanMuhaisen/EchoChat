@@ -1,0 +1,96 @@
+﻿@using EchoChat.Models.ViewModels.Chats
+@model ChatsViewModel
+@{
+    ViewData["Title"] = "Chats";
+}
+
+<div class="">
+    <div class="row">
+        <section class="col-4 vh-100 border-end border-secondary">
+            <h5>Chats</h5>
+            @if (!Model.UserChats.Any())
+            {
+                <p>Select a user to start a new chat</p>
+            }
+            else
+            {
+                @foreach (var chat in Model.UserChats)
+                {
+                    <a asp-controller="Chats"
+                       asp-action="GetChatMessages"
+                       asp-route-id="@chat.Id"
+                       asp-route-receiverId="@chat.ReceiverId"
+                       asp-route-receiverName="@chat.ReceiverName"
+                       class="btn w-100 p-0 pb-2">
+                        <div id="chatItem" class="border-bottom border-secondary d-flex align-items-center pb-1">
+                            <img src="~/images/chat-box.png" height="30px" width="30px" alt="" />
+                            <span class="ms-2">@chat.ReceiverName</span>
+                        </div>
+                    </a>
+                }
+            }
+            @if (Model.UsersWithoutChats.Any())
+            {
+                <h5>New Contacts</h5>
+                @foreach (var user in Model.UsersWithoutChats)
+                {
+                    <a asp-controller="Chats"
+                       asp-action="Post"
+                       asp-route-receiverId="@user.Id"
+                       asp-route-receiverName="@user.UserName"
+                       class="btn w-100 p-0 pb-2">
+                        <div class="border-bottom border-secondary d-flex align-items-center pb-1">
+                            <img src="~/images/chat.png" height="30px" width="30px" alt="" />
+                            <span class="ms-2">@user.UserName!.Substring(0, user.UserName.IndexOf('@'))</span>
+                        </div>
+                    </a>
+                }
+            }
+        </section>
+
+        @if (Model.DisplayChatMessages is not null && Model.DisplayChatMessages == true)
+        {
+            <section class="col-8 vh-100 overflow-hidden" id="chatMessagesContainer">
+                <div class="w-100 bg-secondary bg-gradient rounded" style="height:contain;">
+                    <span id="receverName" class="d-block ps-2 pt-1 pb-1 fw-bold text-light">@(Model.ReceiverName!.Substring(0, Model.ReceiverName.IndexOf('@')))</span>
+                    <span id="typingMessage" class="d-block ps-2 pb-1 fw-normal text-info" hidden>Typing...</span>
+                </div>
+                <div class="row mt-2 h-75 overflow-hidden">
+                    <div class="col border-bottom border-end p-2 h-75" id="chatMessages" style="overflow-x:hidden;">
+                        @for (int i = 1; i <= 3; i++)
+                        {
+                            if (i % 2 == 0)
+                            {
+                                <div class="w-100 bg-success rounded ms-1 mb-1" style="height:contain;--bs-bg-opacity: .5;">
+                                    <p class="ps-1 text-start mb-0">
+                                        Message @i
+                                    </p>
+                                    <p class="text-end pe-2" style="font-size:12px;">12:00</p>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="w-100 bg-secondary rounded ms-1 mb-1" style="height:contain;--bs-bg-opacity: .5;">
+                                    <p class="ps-1 text-start mb-0">
+                                        Message @i
+                                    </p>
+                                    <p class="text-end pe-2" style="font-size:12px;">12:00</p>
+                                </div>
+                            }
+                        }
+                    </div>
+                    <form class="w-100" style="height:50px;margin-top:-68px" id="messageForm">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Message" />
+                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">Send</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        }
+    </div>
+</div>
+@section Scripts {
+    <script src="~/lib//microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/chat.js"></script>
+}
