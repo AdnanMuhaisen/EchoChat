@@ -1,4 +1,5 @@
-﻿using EchoChat.Features.Messages;
+﻿using EchoChat.Core.Application.Abstractions.Firestore;
+using EchoChat.Features.Messages;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -7,7 +8,7 @@ using System.Security.Claims;
 namespace EchoChat.Hubs;
 
 [Authorize]
-public class ChatHub(ISender sender) : Hub
+public class ChatHub(ISender sender, IConfiguration configuration, IFirebseStorageService firebseStorageService) : Hub
 {
     public static Dictionary<string, List<string>> UserConnections = [];
 
@@ -47,9 +48,18 @@ public class ChatHub(ISender sender) : Hub
         throw new InvalidOperationException("There`s no connection for the speceified user");
     }
 
-    public async Task SendMessageAsync(string chatId, string receiverId, string receiverName, string message)
+    public async Task SendMessageAsync(string chatId, string receiverId, string receiverName, string message, string fileAsBase64String, string fileName, string contentType)
     {
         var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
+
+        if (!string.IsNullOrEmpty(fileAsBase64String) && !string.IsNullOrEmpty(fileName))
+        {
+            var generatedFileName = $"{Guid.NewGuid().ToString().Split('-')[0]}-{fileName}";
+            await firebseStorageService.UploadFileAsync(generatedFileName, fileAsBase64String, contentType);
+
+
+        }
+
         var addedMessage = await sender
             .Send(new CreateMessage.Command(chatId, userId, receiverId, message, DateTime.UtcNow, DateTime.UtcNow, null));
         if (!string.IsNullOrEmpty(addedMessage.Id))

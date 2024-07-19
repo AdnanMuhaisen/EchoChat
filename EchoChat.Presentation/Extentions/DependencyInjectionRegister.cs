@@ -1,6 +1,7 @@
 ﻿using EchoChat.Core.Application.Abstractions.Firestore;
 using EchoChat.Core.Domain.UserAggregates;
 using EchoChat.Infrastructure.DataAccess;
+using EchoChat.Infrastructure.DataAccess.Firebase.FirebaseStorage;
 using EchoChat.Infrastructure.DataAccess.Firebase.Firestore.Factories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,7 @@ public static class DependencyInjectionRegister
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
 
+        services.AddScoped<IFirebseStorageService, FirebaseStorageService>();
         services.AddScoped<IFirestoreClientFactory, FirestoreClientFactory>();
         services.AddScoped<ICollectionReferenceFactory, CollectionReferenceFactory>();
 

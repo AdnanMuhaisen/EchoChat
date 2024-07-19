@@ -4,11 +4,42 @@
 
 const messageForm = document.getElementById("messageForm");
 messageForm.addEventListener("submit", (event) => {
-    console.log("Submitted");
     event.preventDefault();
     const formData = new FormData(messageForm);
+    const associatedFile = formData.get("associatedFile");
+
+    if (formData.get("message").length === 0 && associatedFile.size === 0) {
+        return;
+    }
+
     document.getElementById("messageInput").value = "";
-    chatHub.send("SendMessageAsync", formData.get("chatId"), formData.get("receiverId"), formData.get("receiverName"), formData.get("message"));
+
+    if (associatedFile.size > 0) {
+        const reader = new FileReader();
+        reader.readAsDataURL(associatedFile);
+        reader.onload = (event) => {
+            const associatedFileAsBase64String = event.target.result.split(',')[1];
+            chatHub.send("SendMessageAsync",
+                formData.get("chatId"),
+                formData.get("receiverId"),
+                formData.get("receiverName"),
+                formData.get("message"),
+                associatedFileAsBase64String,
+                associatedFile.name,
+                associatedFile.type);
+
+            return;
+        };
+    } else {
+        chatHub.send("SendMessageAsync",
+            formData.get("chatId"),
+            formData.get("receiverId"),
+            formData.get("receiverName"),
+            formData.get("message"),
+            null,
+            null,
+            null);
+    }
 });
 
 window.onload = () => {

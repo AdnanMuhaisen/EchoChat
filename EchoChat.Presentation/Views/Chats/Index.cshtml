@@ -82,10 +82,11 @@
                             }
                         }
                     </div>
-                    <form class="w-100" style="height:50px;margin-top:-68px" id="messageForm" enctype="multipart/form-data">
+                    <form class="w-100" style="height:50px;margin-top:-60px" id="messageForm" enctype="multipart/form-data">
                         <input type="text" name="receiverId" value="@Model.ReceiverId" hidden id="receiverIdInput"/>
                         <input type="text" name="receiverName" value="@Model.ReceiverName" hidden />
                         <input type="text" name="chatId" value="@Model.ChatId" hidden />
+                        <input type="file" class="mb-1 w-100" name="associatedFile" id="messageFile"/>
                         <div class="input-group">
                             <input type="text" class="form-control" placeholder="Message" name="message" id="messageInput"/>
                             <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Send</button>
