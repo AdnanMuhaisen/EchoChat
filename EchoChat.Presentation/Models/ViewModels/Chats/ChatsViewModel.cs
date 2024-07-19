@@ -14,6 +14,8 @@ public class ChatsViewModel
 
     public string? ChatId { get; set; }
 
+    public string? UserId { get; set; }
+
     public string? ReceiverId { get; set; }
 
     public string? ReceiverName { get; set; }
