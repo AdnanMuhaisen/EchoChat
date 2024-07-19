@@ -14,50 +14,52 @@ namespace EchoChat.Controllers;
 [Route("[controller]")]
 public class ChatsController(ISender sender) : Controller
 {
-    public async Task<IActionResult> Index(ChatsViewModel chatsViewModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(CancellationToken cancellationToken)
     {
-        var targetViewModel = new ChatsViewModel();
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var userChats = await sender.Send(new GetAllChats.Query(userId!), cancellationToken);
         var usersWithChats = userChats.Select(x => int.Parse(x.ReceiverId!));
         var usersWithoutChats = await sender.Send(new GetUsers.Query(int.Parse(userId!), usersWithChats), cancellationToken);
-        if (chatsViewModel.DisplayChatMessages is not null and true)
+
+        return View(new ChatsViewModel
         {
-            targetViewModel.DisplayChatMessages = true;
-            targetViewModel.ChatId = chatsViewModel.ChatId;
-            targetViewModel.ReceiverId = chatsViewModel.ReceiverId;
-            targetViewModel.ReceiverName = chatsViewModel.ReceiverName;
-            targetViewModel.ChatMessages = chatsViewModel.ChatMessages;
-        }
-
-        targetViewModel.UserChats = userChats;
-        targetViewModel.UsersWithoutChats = usersWithoutChats;
-
-        return View(targetViewModel);
+            UserChats = userChats,
+            UsersWithoutChats = usersWithoutChats
+        });
     }
 
     [HttpGet("new-chat/{receiverId}/{receiverName}")]
     public async Task<IActionResult> Post([FromRoute] string receiverId, [FromRoute] string receiverName, CancellationToken cancellationToken)
     {
-        await sender.Send(new CreateChat.Command(User!.FindFirstValue(ClaimTypes.NameIdentifier), receiverId, receiverName), cancellationToken);
+        await sender.Send(new CreateChat.Command(
+            User!.FindFirstValue(ClaimTypes.NameIdentifier), User.FindFirstValue(ClaimTypes.Name), receiverId, receiverName),
+            cancellationToken);
 
         return RedirectToAction("Index");
     }
 
-    [HttpGet("{id}/{receiverId}")]
-    public async Task<IActionResult> GetChatMessages([FromRoute(Name = "id")] string chatId, [FromRoute] string receiverId, string receiverName, CancellationToken cancellationToken)
+    [HttpGet("{id}/{receiverId}/{receiverName}")]
+    public async Task<IActionResult> GetChatMessages([FromRoute(Name = "id")] string chatId, [FromRoute] string receiverId, [FromRoute] string receiverName, CancellationToken cancellationToken)
     {
-        List<MessageDto> chatMessages = await sender.Send(
-            new GetChatMessages.Query(chatId, User.FindFirstValue(ClaimTypes.NameIdentifier), receiverId),
-            cancellationToken);
+        List<MessageDto> chatMessages = (await sender
+            .Send(new GetChatMessages.Query(chatId), cancellationToken))
+            .OrderBy(m => m.SentAt)
+            .ToList();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userChats = await sender.Send(new GetAllChats.Query(userId!), cancellationToken);
+        var usersWithChats = userChats.Select(x => int.Parse(x.ReceiverId!));
+        var usersWithoutChats = await sender.Send(new GetUsers.Query(int.Parse(userId!), usersWithChats), cancellationToken);
 
-        return RedirectToAction("Index", new ChatsViewModel
+        return View("Index", new ChatsViewModel
         {
+            UserId = userId,
             ChatId = chatId,
+            UserChats = userChats,
             ReceiverId = receiverId,
             DisplayChatMessages = true,
             ChatMessages = chatMessages,
-            ReceiverName = receiverName
+            UsersWithoutChats = usersWithoutChats,
+            ReceiverName = receiverName[..receiverName.IndexOf('@')]
         });
     }
 }
