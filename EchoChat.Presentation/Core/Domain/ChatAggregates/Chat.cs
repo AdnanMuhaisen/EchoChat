@@ -10,13 +10,16 @@ public class Chat : IFirestoreEntity, IDeletableEntity
     public string? Id { get; set; }
 
     [FirestoreProperty]
-    public string? UserId { get; set; }
+    public string? FirstMemberId { get; set; }
 
     [FirestoreProperty]
-    public string? ReceiverId { get; set; }
+    public string? SecondMemberId { get; set; }
 
     [FirestoreProperty]
-    public string? ReceiverName { get; set; }
+    public string? FirstMemberName { get; set; }
+
+    [FirestoreProperty]
+    public string? SecondMemberName { get; set; }
 
     [FirestoreProperty]
     public bool IsDeleted { get; set; }

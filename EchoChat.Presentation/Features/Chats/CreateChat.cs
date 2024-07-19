@@ -9,13 +9,15 @@ namespace EchoChat.Features.Chats;
 
 public static class CreateChat
 {
-    public class Command(string? userId, string? receiverId, string? receiverName) : IRequest<ChatDto>
+    public class Command(string? firstMemberId, string? firstMemberName, string? secondMemberId, string? secondMemberName) : IRequest<ChatDto>
     {
-        public string? UserId { get; set; } = userId;
+        public string? FirstMemberId { get; set; } = firstMemberId;
 
-        public string? ReceiverId { get; set; } = receiverId;
+        public string? FirstMemberName { get; set; } = firstMemberName;
 
-        public string? ReceiverName { get; set; } = receiverName;
+        public string? SecondMemberId { get; set; } = secondMemberId;
+
+        public string? SecondMemberName { get; set; } = secondMemberName;
     }
 
     public sealed class Handler(ICollectionReferenceFactory collectionReferenceFactory) : IRequestHandler<Command, ChatDto>
