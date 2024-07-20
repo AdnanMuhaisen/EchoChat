@@ -7,5 +7,5 @@ namespace EchoChat.Infrastructure.DataAccess.Firebase.Firestore.Factories;
 public class CollectionReferenceFactory(IFirestoreClientFactory firestoreClientFactory) : ICollectionReferenceFactory
 {
     public CollectionReference GetCollection(string path)
-        => FirestoreDb.Create(FirestoreRequirements.ProjectId, firestoreClientFactory.GetClient()).Collection(path);
+        => FirestoreDb.Create(FirbaseRequirements.ProjectId, firestoreClientFactory.GetClient()).Collection(path);
 }

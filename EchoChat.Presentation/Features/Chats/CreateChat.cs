@@ -24,7 +24,7 @@ public static class CreateChat
     {
         public async Task<ChatDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var chatsCollection = collectionReferenceFactory.GetCollection(FirestoreRequirements.ChatsCollectionPath);
+            var chatsCollection = collectionReferenceFactory.GetCollection(FirbaseRequirements.ChatsCollectionPath);
             Chat addedChat = request.Adapt<Chat>();
             var documentReference = await chatsCollection.AddAsync(addedChat, cancellationToken);
             var documentSnapshot = await documentReference.GetSnapshotAsync(cancellationToken);

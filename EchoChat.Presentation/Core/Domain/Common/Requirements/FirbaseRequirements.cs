@@ -1,6 +1,6 @@
 ﻿namespace EchoChat.Core.Domain.Common.Requirements;
 
-public static class FirestoreRequirements
+public static class FirbaseRequirements
 {
     public static readonly string ProjectId = "chatapp-6632a";
 

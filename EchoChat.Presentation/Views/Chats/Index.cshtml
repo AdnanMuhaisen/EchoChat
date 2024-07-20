@@ -1,4 +1,5 @@
-﻿@using EchoChat.Models.ViewModels.Chats
+﻿@using EchoChat.Models.ViewModels
+@using EchoChat.Models.ViewModels.Chats
 @using System.Security.Claims
 @model ChatsViewModel
 @{
@@ -67,6 +68,15 @@
                                     <p class="ps-1 text-start mb-0 pt-0 pb-0">
                                         @message.Text
                                     </p>
+
+                                    @if (message.MessageFile?.Url is not null)
+                                    {
+                                        <partial name="_MessageFile" model="@(new MessageFileViewModel
+                                                {
+                                                    Url = message.MessageFile.Url,
+                                                    ContentType=message.MessageFile.ContentType
+                                                })" />
+                                    }
                                     <p class="text-end pe-2" style="font-size:12px;">@message.SentAt.ToShortTimeString()</p>
                                 </div>
                             }
@@ -77,26 +87,37 @@
                                     <p class="ps-1 text-start mb-0">
                                         @message.Text
                                     </p>
+                                    @if (message.MessageFile?.Url is not null)
+                                    {
+                                        <partial name="_MessageFile" model="@(new MessageFileViewModel
+                                                {
+                                                    Url = message.MessageFile.Url,
+                                                    ContentType=message.MessageFile.ContentType
+                                                })" />
+                                    }
                                     <p class="text-end pe-2" style="font-size:12px;">@message.SentAt.ToShortTimeString()</p>
                                 </div>
                             }
                         }
                     </div>
-                    <form class="w-100" style="height:50px;margin-top:-68px" id="messageForm" enctype="multipart/form-data">
-                        <input type="text" name="receiverId" value="@Model.ReceiverId" hidden id="receiverIdInput"/>
+                    <form class="w-100" style="height:50px;" id="messageForm" enctype="multipart/form-data">
+                        <input type="text" name="receiverId" value="@Model.ReceiverId" hidden id="receiverIdInput" />
                         <input type="text" name="receiverName" value="@Model.ReceiverName" hidden />
                         <input type="text" name="chatId" value="@Model.ChatId" hidden />
+                        <input type="file" class="mb-1 w-100" name="associatedFile" id="messageFile" />
                         <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Message" name="message" id="messageInput"/>
+                            <input type="text" class="form-control" placeholder="Message" name="message" id="messageInput" />
                             <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Send</button>
                         </div>
                     </form>
+                    <p class="mt-2 text-info text-center" id="sendingMessage" hidden>Sending...</p>
                 </div>
             </section>
         }
     </div>
 </div>
 @section Scripts {
-    <script src="~/lib//microsoft/signalr/dist/browser/signalr.js"></script>
-    <script src="~/js/chat.js"></script>
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>
+    <script src="~/js/fileHelper.js" type="module"></script>
+    <script src="~/js/chat.js" type="module"></script>
 }

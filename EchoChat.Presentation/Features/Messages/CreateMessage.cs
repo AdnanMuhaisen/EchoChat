@@ -16,7 +16,7 @@ public static class CreateMessage
         string? text,
         DateTime sentAt,
         DateTime? seenAt,
-        string? fileId)
+        MessageFile? messageFile)
         : IRequest<MessageDto>
     {
         public string? ChatId { get; set; } = chatId;
@@ -31,14 +31,14 @@ public static class CreateMessage
 
         public DateTime? SeenAt { get; set; } = seenAt;
 
-        public string? FileId { get; set; } = fileId;
+        public MessageFile? MessageFile { get; set; } = messageFile;
     }
 
     public sealed class Handler(ICollectionReferenceFactory collectionReferenceFactory) : IRequestHandler<Command, MessageDto>
     {
         public async Task<MessageDto> Handle(Command request, CancellationToken cancellationToken)
         {
-            var messagesCollectionReference = collectionReferenceFactory.GetCollection(FirestoreRequirements.MessagesCollectionPath);
+            var messagesCollectionReference = collectionReferenceFactory.GetCollection(FirbaseRequirements.MessagesCollectionPath);
             var addedMessage = request.Adapt<Message>();
             var documentReference = await messagesCollectionReference.AddAsync(addedMessage, cancellationToken);
             var documentSnapshot = await documentReference.GetSnapshotAsync(cancellationToken);

@@ -1,14 +1,45 @@
-﻿const chatHub = new signalR.HubConnectionBuilder()
+﻿import { displayFile } from "./fileHelper.js";
+
+const chatHub = new signalR.HubConnectionBuilder()
     .withUrl("/hubs/chatHub")
     .build();
 
 const messageForm = document.getElementById("messageForm");
-messageForm.addEventListener("submit", (event) => {
-    console.log("Submitted");
+messageForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     const formData = new FormData(messageForm);
+    const associatedFile = formData.get("associatedFile");
+
+    if (formData.get("message").length === 0 && associatedFile.size === 0) {
+        return;
+    }
+
     document.getElementById("messageInput").value = "";
-    chatHub.send("SendMessageAsync", formData.get("chatId"), formData.get("receiverId"), formData.get("receiverName"), formData.get("message"));
+    document.getElementById("messageFile").value = "";
+    if (associatedFile.size > 0) {
+        const reader = new FileReader();
+        reader.readAsDataURL(associatedFile);
+        reader.onload = (event) => {
+            const associatedFileAsBase64String = event.target.result.split(',')[1];
+            chatHub.send("SendMessageAsync",
+                formData.get("chatId"),
+                formData.get("receiverId"),
+                formData.get("message"),
+                associatedFileAsBase64String,
+                associatedFile.name,
+                associatedFile.type);
+
+            return;
+        };
+    } else {
+        chatHub.send("SendMessageAsync",
+            formData.get("chatId"),
+            formData.get("receiverId"),
+            formData.get("message"),
+            null,
+            null,
+            null);
+    }
 });
 
 window.onload = () => {
@@ -16,16 +47,18 @@ window.onload = () => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-chatHub.on("receiveMessage", (receiverName, messageText, sentAt) => {
+chatHub.on("receiveMessage", (senderName, messageText, sentAt, messageFileUrl, messageFileContentType) => {
     const chatMessages = document.getElementById("chatMessages");
     const messageToAppend = `
         <div class="w-100 bg-success rounded ms-1 mb-1" style="height:contain;--bs-bg-opacity: .5;">
-            <span class="ps-1 w-100 d-block border-bottom" style="font-size:12px;">${receiverName}</span>
+            <span class="ps-1 w-100 d-block border-bottom" style="font-size:12px;">${senderName}</span>
             <p class="ps-1 text-start mb-0">
                 ${messageText}
             </p>
+            ${messageFileUrl ? displayFile(messageFileUrl, messageFileContentType) : ""}
             <p class="text-end pe-2" style="font-size:12px;">${sentAt}</p>
         </div>`;
+
     chatMessages.insertAdjacentHTML("beforeend", messageToAppend);
     chatMessages.scrollTo({
         top: chatMessages.scrollHeight,
@@ -33,7 +66,7 @@ chatHub.on("receiveMessage", (receiverName, messageText, sentAt) => {
     });
 });
 
-chatHub.on("displayTheSentMessage", (messageText, sentAt) => {
+chatHub.on("displayTheSentMessage", (messageText, sentAt, messageFileUrl, messageFileContentType) => {
     const chatMessages = document.getElementById("chatMessages");
     const messageToAppend = `
             <div class="w-100 bg-secondary rounded ms-1 mb-1" style="height:contain;--bs-bg-opacity: .5;">
@@ -41,8 +74,10 @@ chatHub.on("displayTheSentMessage", (messageText, sentAt) => {
                 <p class="ps-1 text-start mb-0 pt-0 pb-0">
                     ${messageText}
                 </p>
+                ${messageFileUrl ? displayFile(messageFileUrl, messageFileContentType) : ""}
                 <p class="text-end pe-2" style="font-size:12px;">${sentAt}</p>
             </div>`;
+
     chatMessages.insertAdjacentHTML("beforeend", messageToAppend);
     chatMessages.scrollTo({
         top: chatMessages.scrollHeight,
@@ -75,6 +110,14 @@ chatHub.on("hideTypingMessage", () => {
     typingMessageSpan.setAttribute("hidden", '');
 });
 
+chatHub.on("showSendingMessage", (isVisible) => {
+    const sendingMessage = document.getElementById("sendingMessage");
+    if (isVisible) {
+        sendingMessage.removeAttribute("hidden");
+    } else {
+        sendingMessage.setAttribute("hidden", "");
+    }
+})
 
 chatHub
     .start()
@@ -85,4 +128,4 @@ chatHub
         () => {
             console.log("failed to connect");
         }
-    );
+    ).catch((error) => console.log(error.message));

@@ -1,4 +1,5 @@
 ﻿using EchoChat.Core.Application.Abstractions.Firestore;
+using EchoChat.Core.Domain.Common;
 using EchoChat.Core.Domain.Common.Requirements;
 using EchoChat.Core.Domain.MessageAggregate;
 using EchoChat.Dtos;
@@ -19,7 +20,7 @@ public static class GetChatMessages
         public async Task<List<MessageDto>> Handle(Query request, CancellationToken cancellationToken)
         {
             List<MessageDto> chatMessages = [];
-            var messagesCollection = collectionReferenceFactory.GetCollection(FirestoreRequirements.MessagesCollectionPath);
+            var messagesCollection = collectionReferenceFactory.GetCollection(FirbaseRequirements.MessagesCollectionPath);
             var documents = await messagesCollection
                 .WhereEqualTo("ChatId", request.ChatId)
                 .WhereEqualTo("IsDeleted", false)
@@ -27,7 +28,12 @@ public static class GetChatMessages
 
             foreach (var message in documents)
             {
-                chatMessages.Add(message.ConvertTo<Message>().Adapt<MessageDto>());
+                var messageDto = message.ConvertTo<Message>().Adapt<MessageDto>();
+                messageDto.SentAt = messageDto.SentAt.ToJordanDateTime();
+                messageDto.SeenAt = messageDto.SeenAt is not null
+                    ? ((DateTime)messageDto.SeenAt).ToJordanDateTime()
+                    : messageDto.SeenAt;
+                chatMessages.Add(messageDto);
             }
 
             return chatMessages;

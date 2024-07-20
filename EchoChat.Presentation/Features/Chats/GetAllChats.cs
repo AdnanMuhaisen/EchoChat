@@ -18,12 +18,11 @@ public static class GetAllChats
         public async Task<List<ChatDto>> Handle(Query request, CancellationToken cancellationToken)
         {
             List<ChatDto> chats = [];
-            var chatsCollectionReference = collectionReferenceFactory.GetCollection(FirestoreRequirements.ChatsCollectionPath);
+            var chatsCollectionReference = collectionReferenceFactory.GetCollection(FirbaseRequirements.ChatsCollectionPath);
             var userChats = await chatsCollectionReference
                 .WhereEqualTo("FirstMemberId", request.UserId)
                 .WhereEqualTo("IsDeleted", false)
                 .GetSnapshotAsync();
-
             var userReceivedChats = await chatsCollectionReference
                 .WhereEqualTo("SecondMemberId", request.UserId)
                 .WhereEqualTo("IsDeleted", false)
