@@ -23,7 +23,6 @@ public static class GetAllChats
                 .WhereEqualTo("FirstMemberId", request.UserId)
                 .WhereEqualTo("IsDeleted", false)
                 .GetSnapshotAsync();
-
             var userReceivedChats = await chatsCollectionReference
                 .WhereEqualTo("SecondMemberId", request.UserId)
                 .WhereEqualTo("IsDeleted", false)

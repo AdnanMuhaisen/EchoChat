@@ -1,10 +1,11 @@
-﻿const chatHub = new signalR.HubConnectionBuilder()
+﻿import { displayFile } from "./fileHelper.js";
+
+const chatHub = new signalR.HubConnectionBuilder()
     .withUrl("/hubs/chatHub")
-    .configureLogging(signalR.LogLevel.Debug)
     .build();
 
 const messageForm = document.getElementById("messageForm");
-messageForm.addEventListener("submit", (event) => {
+messageForm?.addEventListener("submit", (event) => {
     event.preventDefault();
     const formData = new FormData(messageForm);
     const associatedFile = formData.get("associatedFile");
@@ -23,7 +24,6 @@ messageForm.addEventListener("submit", (event) => {
             chatHub.send("SendMessageAsync",
                 formData.get("chatId"),
                 formData.get("receiverId"),
-                formData.get("receiverName"),
                 formData.get("message"),
                 associatedFileAsBase64String,
                 associatedFile.name,
@@ -35,7 +35,6 @@ messageForm.addEventListener("submit", (event) => {
         chatHub.send("SendMessageAsync",
             formData.get("chatId"),
             formData.get("receiverId"),
-            formData.get("receiverName"),
             formData.get("message"),
             null,
             null,
@@ -48,19 +47,17 @@ window.onload = () => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-chatHub.on("receiveMessage", (receiverName, messageText, sentAt, messageFileUrl, messageFileContentType) => {
+chatHub.on("receiveMessage", (senderName, messageText, sentAt, messageFileUrl, messageFileContentType) => {
     const chatMessages = document.getElementById("chatMessages");
     const messageToAppend = `
         <div class="w-100 bg-success rounded ms-1 mb-1" style="height:contain;--bs-bg-opacity: .5;">
-            <span class="ps-1 w-100 d-block border-bottom" style="font-size:12px;">${receiverName}</span>
+            <span class="ps-1 w-100 d-block border-bottom" style="font-size:12px;">${senderName}</span>
             <p class="ps-1 text-start mb-0">
                 ${messageText}
             </p>
-            ${messageFileUrl ? getSentFileElementToAppend(messageFileUrl, messageFileContentType) : ""}
+            ${messageFileUrl ? displayFile(messageFileUrl, messageFileContentType) : ""}
             <p class="text-end pe-2" style="font-size:12px;">${sentAt}</p>
         </div>`;
-
-    //console.log("file", messageFileUrl, messageFileContentType);
 
     chatMessages.insertAdjacentHTML("beforeend", messageToAppend);
     chatMessages.scrollTo({
@@ -77,11 +74,9 @@ chatHub.on("displayTheSentMessage", (messageText, sentAt, messageFileUrl, messag
                 <p class="ps-1 text-start mb-0 pt-0 pb-0">
                     ${messageText}
                 </p>
-                ${messageFileUrl ? getSentFileElementToAppend(messageFileUrl, messageFileContentType) : ""}
+                ${messageFileUrl ? displayFile(messageFileUrl, messageFileContentType) : ""}
                 <p class="text-end pe-2" style="font-size:12px;">${sentAt}</p>
             </div>`;
-
-    //console.log("file", messageFileUrl, messageFileContentType);
 
     chatMessages.insertAdjacentHTML("beforeend", messageToAppend);
     chatMessages.scrollTo({
@@ -89,27 +84,6 @@ chatHub.on("displayTheSentMessage", (messageText, sentAt, messageFileUrl, messag
         behavior: 'smooth'
     });
 });
-
-function getSentFileElementToAppend(messageFileUrl, contentType) {
-    const contentTypePrefix = contentType.split('/')[0];
-    switch (contentTypePrefix) {
-        case "image":
-            return `
-                <div class="w-100 d-flex border-bottom">
-                    <img src="${messageFileUrl}" alt="image" class="" style="height:150px; width:150px" />
-                </div>`;
-            break;
-        case "video":
-            break;
-        case "text":
-            break;
-        case "audio":
-            break;
-        default:
-            return "";
-            break;
-    }
-}
 
 let isTypingMessageDisplayed = false;
 const messageInput = document.getElementById("messageInput");

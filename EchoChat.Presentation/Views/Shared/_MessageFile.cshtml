@@ -8,8 +8,19 @@
             <img src="@Model.Url" alt="image" class="" style="height:150px; width:150px" />
             break;
         case "video":
+            <video width="300px" height="200px" controls="controls">
+                <source src="@Model.Url" type="@Model.ContentType" />
+            </video>
             break;
         case "audio":
+            <audio controls class="m-1">
+                <source src="@Model.Url" type="@Model.ContentType" />
+            </audio>
+            break;
+        case "text":
+            <a href="@Model.Url" class="link-opacity-10-hover ps-1">
+                @Model.Url!.Split('/')[5]
+            </a>
             break;
         default:
             break;

@@ -1,4 +1,5 @@
 ﻿using EchoChat.Core.Application.Abstractions.Firestore;
+using EchoChat.Core.Domain.Common;
 using EchoChat.Features.Messages;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,7 +23,7 @@ public class ChatHub(ISender sender, IFirebseStorageService firebseStorageServic
         }
         else
         {
-            UserConnections.Add(userId!, [Context.ConnectionId]);
+            UserConnections.Add(userId!, new List<string>() { Context.ConnectionId });
         }
 
         return Task.CompletedTask;
@@ -49,10 +50,11 @@ public class ChatHub(ISender sender, IFirebseStorageService firebseStorageServic
         throw new InvalidOperationException("There`s no connection for the speceified user");
     }
 
-    public async Task SendMessageAsync(string chatId, string receiverId, string receiverName, string message, string fileAsBase64String, string fileName, string contentType)
+    public async Task SendMessageAsync(string chatId, string receiverId, string message, string fileAsBase64String, string fileName, string contentType)
     {
         await Clients.Caller.SendAsync("showSendingMessage", true);
         var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userName = Context.User!.FindFirstValue(ClaimTypes.Name);
         var createMessageCommand = new CreateMessage.Command(chatId, userId, receiverId, message, DateTime.UtcNow, DateTime.UtcNow, null);
         if (!string.IsNullOrEmpty(fileAsBase64String) && !string.IsNullOrEmpty(fileName))
         {
@@ -69,15 +71,16 @@ public class ChatHub(ISender sender, IFirebseStorageService firebseStorageServic
         {
             await Clients.User(receiverId).SendAsync(
                 "receiveMessage",
-                receiverName,
+                userName![..userName!.IndexOf('@')],
+                //receiverName,
                 addedMessage.Text,
-                addedMessage.SentAt.ToShortTimeString(),
+                addedMessage.SentAt.ToJordanDateTime().ToShortTimeString(),
                 addedMessage.MessageFile?.Url ?? null,
                 addedMessage.MessageFile?.ContentType ?? null);
             await Clients.Caller.SendAsync(
                 "displayTheSentMessage",
                 addedMessage.Text,
-                addedMessage.SentAt.ToShortTimeString(),
+                addedMessage.SentAt.ToJordanDateTime().ToShortTimeString(),
                 addedMessage.MessageFile?.Url ?? null,
                 addedMessage.MessageFile?.ContentType ?? null);
             await Clients.User(receiverId).SendAsync("hideTypingMessage");
