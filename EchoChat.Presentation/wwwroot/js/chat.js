@@ -1,5 +1,6 @@
 ﻿const chatHub = new signalR.HubConnectionBuilder()
     .withUrl("/hubs/chatHub")
+    .configureLogging(signalR.LogLevel.Debug)
     .build();
 
 const messageForm = document.getElementById("messageForm");
@@ -13,7 +14,7 @@ messageForm.addEventListener("submit", (event) => {
     }
 
     document.getElementById("messageInput").value = "";
-
+    document.getElementById("messageFile").value = "";
     if (associatedFile.size > 0) {
         const reader = new FileReader();
         reader.readAsDataURL(associatedFile);
@@ -47,7 +48,7 @@ window.onload = () => {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-chatHub.on("receiveMessage", (receiverName, messageText, sentAt) => {
+chatHub.on("receiveMessage", (receiverName, messageText, sentAt, messageFileUrl, messageFileContentType) => {
     const chatMessages = document.getElementById("chatMessages");
     const messageToAppend = `
         <div class="w-100 bg-success rounded ms-1 mb-1" style="height:contain;--bs-bg-opacity: .5;">
@@ -55,8 +56,12 @@ chatHub.on("receiveMessage", (receiverName, messageText, sentAt) => {
             <p class="ps-1 text-start mb-0">
                 ${messageText}
             </p>
+            ${messageFileUrl ? getSentFileElementToAppend(messageFileUrl, messageFileContentType) : ""}
             <p class="text-end pe-2" style="font-size:12px;">${sentAt}</p>
         </div>`;
+
+    //console.log("file", messageFileUrl, messageFileContentType);
+
     chatMessages.insertAdjacentHTML("beforeend", messageToAppend);
     chatMessages.scrollTo({
         top: chatMessages.scrollHeight,
@@ -64,7 +69,7 @@ chatHub.on("receiveMessage", (receiverName, messageText, sentAt) => {
     });
 });
 
-chatHub.on("displayTheSentMessage", (messageText, sentAt) => {
+chatHub.on("displayTheSentMessage", (messageText, sentAt, messageFileUrl, messageFileContentType) => {
     const chatMessages = document.getElementById("chatMessages");
     const messageToAppend = `
             <div class="w-100 bg-secondary rounded ms-1 mb-1" style="height:contain;--bs-bg-opacity: .5;">
@@ -72,14 +77,39 @@ chatHub.on("displayTheSentMessage", (messageText, sentAt) => {
                 <p class="ps-1 text-start mb-0 pt-0 pb-0">
                     ${messageText}
                 </p>
+                ${messageFileUrl ? getSentFileElementToAppend(messageFileUrl, messageFileContentType) : ""}
                 <p class="text-end pe-2" style="font-size:12px;">${sentAt}</p>
             </div>`;
+
+    //console.log("file", messageFileUrl, messageFileContentType);
+
     chatMessages.insertAdjacentHTML("beforeend", messageToAppend);
     chatMessages.scrollTo({
         top: chatMessages.scrollHeight,
         behavior: 'smooth'
     });
 });
+
+function getSentFileElementToAppend(messageFileUrl, contentType) {
+    const contentTypePrefix = contentType.split('/')[0];
+    switch (contentTypePrefix) {
+        case "image":
+            return `
+                <div class="w-100 d-flex border-bottom">
+                    <img src="${messageFileUrl}" alt="image" class="" style="height:150px; width:150px" />
+                </div>`;
+            break;
+        case "video":
+            break;
+        case "text":
+            break;
+        case "audio":
+            break;
+        default:
+            return "";
+            break;
+    }
+}
 
 let isTypingMessageDisplayed = false;
 const messageInput = document.getElementById("messageInput");
@@ -106,6 +136,14 @@ chatHub.on("hideTypingMessage", () => {
     typingMessageSpan.setAttribute("hidden", '');
 });
 
+chatHub.on("showSendingMessage", (isVisible) => {
+    const sendingMessage = document.getElementById("sendingMessage");
+    if (isVisible) {
+        sendingMessage.removeAttribute("hidden");
+    } else {
+        sendingMessage.setAttribute("hidden", "");
+    }
+})
 
 chatHub
     .start()
@@ -116,4 +154,4 @@ chatHub
         () => {
             console.log("failed to connect");
         }
-    );
+    ).catch((error) => console.log(error.message));

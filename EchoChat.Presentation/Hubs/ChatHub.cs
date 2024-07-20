@@ -8,7 +8,7 @@ using System.Security.Claims;
 namespace EchoChat.Hubs;
 
 [Authorize]
-public class ChatHub(ISender sender, IConfiguration configuration, IFirebseStorageService firebseStorageService) : Hub
+public class ChatHub(ISender sender, IFirebseStorageService firebseStorageService) : Hub
 {
     public static Dictionary<string, List<string>> UserConnections = [];
 
@@ -30,6 +30,7 @@ public class ChatHub(ISender sender, IConfiguration configuration, IFirebseStora
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
+        // log the exception message
         var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
         if (UserConnections.TryGetValue(userId!, out List<string>? userConnections))
         {
@@ -44,29 +45,43 @@ public class ChatHub(ISender sender, IConfiguration configuration, IFirebseStora
                 return Task.CompletedTask;
             }
         }
-        // else
+
         throw new InvalidOperationException("There`s no connection for the speceified user");
     }
 
     public async Task SendMessageAsync(string chatId, string receiverId, string receiverName, string message, string fileAsBase64String, string fileName, string contentType)
     {
+        await Clients.Caller.SendAsync("showSendingMessage", true);
         var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
-
+        var createMessageCommand = new CreateMessage.Command(chatId, userId, receiverId, message, DateTime.UtcNow, DateTime.UtcNow, null);
         if (!string.IsNullOrEmpty(fileAsBase64String) && !string.IsNullOrEmpty(fileName))
         {
             var generatedFileName = $"{Guid.NewGuid().ToString().Split('-')[0]}-{fileName}";
-            await firebseStorageService.UploadFileAsync(generatedFileName, fileAsBase64String, contentType);
-
-
+            var messageFile = await firebseStorageService.UploadFileAsync(generatedFileName, fileAsBase64String, contentType);
+            if (messageFile is not null)
+            {
+                createMessageCommand.MessageFile = messageFile;
+            }
         }
 
-        var addedMessage = await sender
-            .Send(new CreateMessage.Command(chatId, userId, receiverId, message, DateTime.UtcNow, DateTime.UtcNow, null));
+        var addedMessage = await sender.Send(createMessageCommand);
         if (!string.IsNullOrEmpty(addedMessage.Id))
         {
-            await Clients.User(receiverId).SendAsync("receiveMessage", receiverName, addedMessage.Text, addedMessage.SentAt.ToShortTimeString());
-            await Clients.Caller.SendAsync("displayTheSentMessage", addedMessage.Text, addedMessage.SentAt.ToShortTimeString());
+            await Clients.User(receiverId).SendAsync(
+                "receiveMessage",
+                receiverName,
+                addedMessage.Text,
+                addedMessage.SentAt.ToShortTimeString(),
+                addedMessage.MessageFile?.Url ?? null,
+                addedMessage.MessageFile?.ContentType ?? null);
+            await Clients.Caller.SendAsync(
+                "displayTheSentMessage",
+                addedMessage.Text,
+                addedMessage.SentAt.ToShortTimeString(),
+                addedMessage.MessageFile?.Url ?? null,
+                addedMessage.MessageFile?.ContentType ?? null);
             await Clients.User(receiverId).SendAsync("hideTypingMessage");
+            await Clients.Caller.SendAsync("showSendingMessage", false);
         }
 
         // error

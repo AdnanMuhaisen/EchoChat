@@ -13,7 +13,10 @@ public class Message : IDeletableEntity
     public string? ChatId { get; set; }
 
     [FirestoreProperty]
-    public string? SenderId { get; set; }
+    public string? SenderId { get; set; } 
+    
+    [FirestoreProperty]
+    public string? ReceiverId { get; set; }
 
     [FirestoreProperty]
     public string? Text { get; set; }
@@ -31,5 +34,5 @@ public class Message : IDeletableEntity
     public DateTime? DeletedAt { get; set; }
 
     [FirestoreProperty]
-    public string? FileId { get; set; }
+    public MessageFile? MessageFile { get; set; }
 }

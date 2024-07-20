@@ -12,7 +12,10 @@ public static class DependencyInjectionRegister
 {
     public static IServiceCollection AddPresentation(this IServiceCollection services)
     {
-        services.AddSignalR();
+        services.AddSignalR(options =>
+        {
+            options.MaximumReceiveMessageSize = 10 * 1024 * 1024; // 10 mb
+        });
         services.AddMediatR(config => config.RegisterServicesFromAssembly(typeof(Program).Assembly));
 
         return services;

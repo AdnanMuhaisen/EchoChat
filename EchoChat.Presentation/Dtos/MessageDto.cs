@@ -16,5 +16,12 @@ public class MessageDto
 
     public DateTime? SeenAt { get; set; }
 
-    public string? FileId { get; set; }
+    public MessageFileDto? MessageFile { get; set; }
+}
+
+public class MessageFileDto
+{
+    public string? Url { get; set; }
+
+    public string? ContentType { get; set; }
 }

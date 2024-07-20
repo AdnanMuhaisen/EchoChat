@@ -1,0 +1,17 @@
+﻿@using EchoChat.Models.ViewModels.Chats
+@model MessageFileViewModel
+
+<div class="w-100 d-flex border-bottom">
+    @switch (Model.ContentType?.Split('/')[0])
+    {
+        case "image":
+            <img src="@Model.Url" alt="image" class="" style="height:150px; width:150px" />
+            break;
+        case "video":
+            break;
+        case "audio":
+            break;
+        default:
+            break;
+    }
+</div>

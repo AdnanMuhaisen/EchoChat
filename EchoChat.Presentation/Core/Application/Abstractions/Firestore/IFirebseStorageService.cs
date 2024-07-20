@@ -1,6 +1,8 @@
-﻿namespace EchoChat.Core.Application.Abstractions.Firestore;
+﻿using EchoChat.Core.Domain.MessageAggregate;
+
+namespace EchoChat.Core.Application.Abstractions.Firestore;
 
 public interface IFirebseStorageService
 {
-    Task UploadFileAsync(string fileName, string fileAsBase64String, string contentType);
+    Task<MessageFile?> UploadFileAsync(string fileName, string fileAsBase64String, string contentType);
 }
