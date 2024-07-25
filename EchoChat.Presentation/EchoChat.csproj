@@ -31,4 +31,8 @@
 	  <None Include="Infrastructure\DataAccess\Firebase\chatapp-6632a-firebase-adminsdk-d5f7w-c0b5c344ec.json" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Features\Calls\" />
+	</ItemGroup>
+
 </Project>
