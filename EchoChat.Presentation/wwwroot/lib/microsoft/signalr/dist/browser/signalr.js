@@ -2908,7 +2908,7 @@ class HttpConnection {
             const negotiateResponse = JSON.parse(response.content);
             if (!negotiateResponse.negotiateVersion || negotiateResponse.negotiateVersion < 1) {
                 // Negotiate version 0 doesn't use connectionToken
-                // So we set it equal to connectionId so all our logic can use connectionToken without being aware of the negotiate version
+                // So we set it equal to receiverConnectionId so all our logic can use connectionToken without being aware of the negotiate version
                 negotiateResponse.connectionToken = negotiateResponse.connectionId;
             }
             if (negotiateResponse.useStatefulReconnect && this._options._useStatefulReconnect !== true) {

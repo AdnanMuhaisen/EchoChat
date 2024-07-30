@@ -19,7 +19,7 @@ public class ChatsController(ISender sender) : Controller
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var userChats = await sender.Send(new GetAllChats.Query(userId!), cancellationToken);
         var usersWithChats = userChats.Select(x => int.Parse(x.ReceiverId!));
-        var usersWithoutChats = await sender.Send(new GetUsers.Query(int.Parse(userId!), usersWithChats), cancellationToken);
+        var usersWithoutChats = await sender.Send(new GetUsersWithoutChat.Query(int.Parse(userId!), usersWithChats), cancellationToken);
 
         return View(new ChatsViewModel
         {
@@ -48,7 +48,7 @@ public class ChatsController(ISender sender) : Controller
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var userChats = await sender.Send(new GetAllChats.Query(userId!), cancellationToken);
         var usersWithChats = userChats.Select(x => int.Parse(x.ReceiverId!));
-        var usersWithoutChats = await sender.Send(new GetUsers.Query(int.Parse(userId!), usersWithChats), cancellationToken);
+        var usersWithoutChats = await sender.Send(new GetUsersWithoutChat.Query(int.Parse(userId!), usersWithChats), cancellationToken);
 
         return View("Index", new ChatsViewModel
         {

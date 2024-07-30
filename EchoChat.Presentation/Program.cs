@@ -30,6 +30,7 @@ app.UseRouting();
 app.UseAuthorization();
 
 app.MapHub<ChatHub>("/hubs/chatHub");
+app.MapHub<CallHub>("/hubs/callHub");
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

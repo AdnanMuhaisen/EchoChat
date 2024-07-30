@@ -9,47 +9,8 @@ using System.Security.Claims;
 namespace EchoChat.Hubs;
 
 [Authorize]
-public class ChatHub(ISender sender, IFirebseStorageService firebseStorageService) : Hub
+public class ChatHub(ISender sender, IFirebseStorageService firebseStorageService) : HubBase
 {
-    public static Dictionary<string, List<string>> UserConnections = [];
-
-    public override Task OnConnectedAsync()
-    {
-        var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (UserConnections.TryGetValue(userId!, out List<string>? userConnection))
-        {
-            userConnection.Add(Context.ConnectionId);
-            UserConnections[userId!] = userConnection;
-        }
-        else
-        {
-            UserConnections.Add(userId!, new List<string>() { Context.ConnectionId });
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public override Task OnDisconnectedAsync(Exception? exception)
-    {
-        // log the exception message
-        var userId = Context.User!.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (UserConnections.TryGetValue(userId!, out List<string>? userConnections))
-        {
-            if (userConnections.Count() == 1)
-            {
-                UserConnections.Remove(userId!);
-                return Task.CompletedTask;
-            }
-            else
-            {
-                UserConnections[userId!] = userConnections;
-                return Task.CompletedTask;
-            }
-        }
-
-        throw new InvalidOperationException("There`s no connection for the speceified user");
-    }
-
     public async Task SendMessageAsync(string chatId, string receiverId, string message, string fileAsBase64String, string fileName, string contentType)
     {
         await Clients.Caller.SendAsync("showSendingMessage", true);
