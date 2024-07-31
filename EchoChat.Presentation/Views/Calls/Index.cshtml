@@ -10,10 +10,10 @@
                     @user.UserName
                 </div>
                 <div class="call-options">
-                    <button class="btn btn-primary" id=@($"audio-call-{user.Id}") onclick="onAudioCallClick(event)">
+                    <button class="btn btn-primary" id=@($"audio-call-{user.Id}-{user.UserName}") onclick="onAudioCallClick(event)">
                         <i class="bi bi-telephone-fill"></i>
                     </button>
-                    <button class="btn btn-primary" id=@($"video-call-{user.Id}") onclick="">
+                    <button class="btn btn-primary" id=@($"video-call-{user.Id}-{user.UserName}") onclick="onVideoCallClick(event)">
                         <i class="bi bi-camera-video-fill"></i>
                     </button>
                 </div>
@@ -21,10 +21,17 @@
         }
     </div>
     <div class="col" id="call-container">
-        <audio id="remote-audio" controls autoplay></audio>
+        <p id="offline-user-message" class="text-center text-danger" hidden>The requested user is currently offline</p>
+        <div id="audio-call" hidden class="justify-content-evenly align-items-center bg-info rounded-1 p-2 border border-primary w-50">
+            <p id="audio-call-user-name">Audio Call:</p>
+            <p id="receiverName"></p>
+            <button id="close-audio-call" class="btn btn-danger"><i class="bi bi-telephone-minus-fill"></i></button>
+            <audio id="remote-audio" hidden controls autoplay></audio>
+        </div>
     </div>
 </div>
 <input id="user-id" type="text" value="@Model.UserId" hidden />
+<input id="user-name" type="text" value="@Model.UserName" hidden />
 
 @section Scripts {
     <script src="~/lib/microsoft/signalr/dist/browser/signalr.js"></script>

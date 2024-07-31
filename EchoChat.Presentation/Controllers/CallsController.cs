@@ -12,7 +12,7 @@ public class CallsController(ISender sender) : Controller
 {
     public async Task<IActionResult> Index()
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var (userId, userName) = (User.FindFirstValue(ClaimTypes.NameIdentifier), User.FindFirstValue(ClaimTypes.Name));
         var users = await sender.Send(new GetUsers.Query());
         users.Remove(users.First(u => u.Id == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!)));
         foreach (var user in users)
@@ -23,7 +23,8 @@ public class CallsController(ISender sender) : Controller
         var callsViewModel = new CallsViewModel
         {
             Users = users,
-            UserId = userId
+            UserId = userId,
+            UserName = userName![..userName!.IndexOf('@')]
         };
 
         return View(callsViewModel);

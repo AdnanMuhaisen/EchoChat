@@ -4,6 +4,7 @@
 
 let receiverId;
 const userId = document.getElementById('user-id').value;
+const userName = document.getElementById('user-name').value;
 
 const onAudioCallClick = async (event) => {
     let target = event.target;
@@ -11,8 +12,10 @@ const onAudioCallClick = async (event) => {
         target = target.closest('button');
     }
 
-    const receiverId = target.id.split('-')[2];
-    await startCall(receiverId);
+    const elementIdAsArray = target.id.split('-');
+    const receiverId = elementIdAsArray[2];
+    const receiverName = elementIdAsArray[3];
+    await startCall(receiverId, receiverName);
 };
 
 let localStream = null;
@@ -77,7 +80,20 @@ const createPeerConnection = async () => {
     };
 };
 
-const startCall = async (targetReceiverId) => {
+const displayAudioCallElement = (name) => {
+    const audioCallUserName = document.getElementById('audio-call-user-name');
+    audioCallUserName.innerText = `Audio Call: ${name}`;
+    const audioCallElement = document.getElementById('audio-call');
+    audioCallElement.classList.add('d-flex');
+};
+
+const hideAudioCallElement = () => {
+    const audioCallElement = document.getElementById('audio-call');
+    audioCallElement.classList.remove('d-flex');
+    document.getElementById('audio-call-user-name').value = '';
+};
+
+const startCall = async (targetReceiverId, receiverName) => {
     receiverId = targetReceiverId;
 
     await fetchUserMedia();
@@ -88,7 +104,11 @@ const startCall = async (targetReceiverId) => {
 
     await peerConnection.setLocalDescription(offer);
 
-    await callConnection.send("SendOffer", JSON.stringify(offer), userId, receiverId);
+    console.log("send offer ", receiverId);
+
+    await callConnection.send("SendOffer", JSON.stringify(offer), userId, receiverId, userName);
+
+    displayAudioCallElement(receiverName);
 }
 
 callConnection.on("receiveIceCandidate", (candidate) => {
@@ -96,7 +116,7 @@ callConnection.on("receiveIceCandidate", (candidate) => {
     peerConnection.addIceCandidate(new RTCIceCandidate(JSON.parse(candidate)));
 });
 
-callConnection.on("receiveOffer", async (offer, senderId) => {
+callConnection.on("receiveOffer", async (offer, senderId, senderName) => {
     try {
         // The following code will be executed on the receiver's side to generate
         // the answer. Here, when I get the sender's ID, this sender is actually the receiver
@@ -117,6 +137,7 @@ callConnection.on("receiveOffer", async (offer, senderId) => {
 
         await callConnection.send('SendAnswer', JSON.stringify(answer), senderId);
 
+        displayAudioCallElement(senderName);
     } catch (error) {
         console.error(error);
     }
@@ -124,11 +145,32 @@ callConnection.on("receiveOffer", async (offer, senderId) => {
 
 callConnection.on("receiveAnswer", async (answer) => {
     try {
-        console.log('received anwer');
+        console.log('received answer');
         await peerConnection.setRemoteDescription(new RTCSessionDescription(JSON.parse(answer)));
     } catch (error) {
         console.error(error);
     }
+});
+
+document.getElementById('close-audio-call').addEventListener('click', async () => {
+    peerConnection.close();
+    hideAudioCallElement();
+    await callConnection.send('EndCall', receiverId);
+});
+
+callConnection.on('callEnded', () => {
+    peerConnection.close();
+    hideAudioCallElement();
+});
+
+callConnection.on('callingOfflineUser', () => {
+    hideAudioCallElement();
+    const offlineUserMessage = document.getElementById('offline-user-message');
+    offlineUserMessage.removeAttribute('hidden');
+
+    setTimeout(() => {
+        offlineUserMessage.setAttribute('hidden', "");
+    }, 2000);
 });
 
 callConnection
