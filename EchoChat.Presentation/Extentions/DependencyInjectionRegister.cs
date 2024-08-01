@@ -5,6 +5,7 @@ using EchoChat.Infrastructure.DataAccess.Firebase.FirebaseStorage;
 using EchoChat.Infrastructure.DataAccess.Firebase.Firestore.Factories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
 
 namespace EchoChat.Extentions;
 
