@@ -22,11 +22,24 @@
     </div>
     <div class="col" id="call-container">
         <p id="offline-user-message" class="text-center text-danger" hidden>The requested user is currently offline</p>
+        <p id="rejected-call-message" class="text-center text-danger" hidden>The requested user is busy!</p>
+        <div id="coming-call-notification" hidden class="flex-column align-items-center bg-info rounded-2 p-3">
+            <p>Coming Call: <b id="caller-name">Caller Name</b></p>
+            <div class="row gap-2">
+                <button id="answer-coming-call" class="btn btn-success col"><i class="bi bi-telephone-fill"></i></button>
+                <button id="close-coming-call" class="col btn btn-danger w-25"><i class="bi bi-telephone-minus-fill"></i></button>
+            </div>
+        </div>
         <div id="audio-call" hidden class="justify-content-evenly align-items-center bg-info rounded-1 p-2 border border-primary w-50">
             <p id="audio-call-user-name">Audio Call:</p>
             <p id="receiverName"></p>
             <button id="close-audio-call" class="btn btn-danger"><i class="bi bi-telephone-minus-fill"></i></button>
             <audio id="remote-audio" hidden controls autoplay></audio>
+        </div>
+        <div id="video-call" hidden class="flex-column justify-content-start align-items-start">
+            <video id="local-video-element" autoplay muted class="h-50 w-100 mb-2"></video>
+            <video id="remote-video-element" autoplay class="h-50 w-100"></video>
+            <button id="close-video-call" class="btn btn-danger mt-3 w-25 mb-3"><i class="bi bi-telephone-minus-fill"></i> End Call</button>
         </div>
     </div>
 </div>

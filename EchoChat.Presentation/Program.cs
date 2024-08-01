@@ -10,6 +10,8 @@ builder.Services
     .AddInfrastructure(builder.Configuration)
     .AddPresentation();
 
+builder.Host.AddSerilog();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

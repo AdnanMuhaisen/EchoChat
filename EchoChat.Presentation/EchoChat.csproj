@@ -8,7 +8,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="Infrastructure\DataAccess\Firebase\chatapp-6632a-firebase-adminsdk-d5f7w-c0b5c344ec.json" />
+		<Content Remove="Infrastructure\DataAccess\Firebase\chatapp-6632a-firebase-adminsdk-d5f7w-c0b5c344ec.json" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -25,14 +25,15 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="Infrastructure\DataAccess\Firebase\chatapp-6632a-firebase-adminsdk-d5f7w-c0b5c344ec.json" />
+		<None Include="Infrastructure\DataAccess\Firebase\chatapp-6632a-firebase-adminsdk-d5f7w-c0b5c344ec.json" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Features\Calls\" />
+		<Folder Include="Features\Calls\" />
 	</ItemGroup>
 
 </Project>
