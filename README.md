@@ -1,7 +1,5 @@
-EchoChat
-
 # Overview
-ChatApp is a real-time chat application built with ASP.NET Core MVC. It leverages SQL Server for database management, Firebase, WebRTC, and offers features like user authentication, private messaging, and live audio and video calls. The project demonstrates the use of modern web technologies to create a chatting experience.
+EchoChat is a real-time chat application built with ASP.NET Core MVC. It leverages SQL Server for database management, Firebase, WebRTC, and offers features like user authentication, private messaging, and live audio and video calls. The project demonstrates the use of modern web technologies to create a chatting experience.
 
 ## Features
 - Real-time chat: Communicate instantly in live chats.
