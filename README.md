@@ -25,7 +25,7 @@ ChatApp is a real-time chat application built with ASP.NET Core MVC. It leverage
 
 ## Getting Started
 1. Clone the repository
-> git clone https://github.com/AdnanMuhaisen/chatapp.git
+> https://github.com/AdnanMuhaisen/EchoChat.git
 
 2. Setup Database
 Ensure SQL Server is installed and running.
