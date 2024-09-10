@@ -3,6 +3,7 @@ EchoChat is a real-time chat application built with ASP.NET Core MVC. It leverag
 
 ## Features
 - Real-time chat: Communicate instantly in live chats.
+- Audio and video calls
 - Private messaging: Send direct messages to other users.
 - User authentication: Secure user registration and login system.
 - Firestore Integration: Efficient storage of messages and user data.
